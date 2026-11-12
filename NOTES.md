@@ -2,6 +2,16 @@
 
 For the next time a Claws Mail upgrade breaks this. The README is the user page. This is the diary.
 
+## Built-in alternative (do not relearn this the hard way)
+
+Claws Mail 4.1.0 / 3.19.0 (3 April 2022) added **Default From:** to **folder Properties → Compose**. NEWS line: *This allows setting an email address which will override the Account's email address.*
+
+The users list pointed this out after 1.0.0 was published. It is not under Preferences. It is not an account identity list. It applies to the folder the message is sitting in, which means each alias needs a folder plus a filtering rule that moves mail there. It does not read the original headers. A mixed Inbox still replies as the account address.
+
+The plugin exists for the mixed-inbox case. Do not "simplify" the plugin into a wrapper around folder properties. People who can live with a folder per alias should not be told to build a `.so`.
+
+If a future Claws grows a real per-account alias list that matches on reply from headers, this plugin should say so in the README and stop being the recommended path.
+
 Test bed: Claws Mail 4.3.1, Debian 13. Plugin file: `claws-replyfromalias.so`. Working behavior is the 1.5.0-debug session, published as 1.0.0. Do not "simplify" the bits listed below without sending a reply to yourself and reading the received From.
 
 The public name is **claws-replyfromalias**. The name Claws shows in the plugin list is **Reply From Alias**. Log, config, and the debug environment variable use the repo name:

@@ -1,11 +1,79 @@
-# claws-mail-reply-from-alias-plugin
-This plugin makes replying to an email sent to your alias email address easy. A mailbox might carry emails from multiple alias email addresses. This plugin makes replying with the correct email address easy.
+# claws-replyfromalias
 
-**Claws Mail plugin: reply From is the alias the message was sent to.**
+**Reply in Claws Mail from the alias the message was sent to.**
 
-You have one real mailbox and several addresses on it (`sales@…`, `jobs@…`, `hi@…`). Stock Claws Mail replies from the mailbox address. This plugin looks at who the original mail was addressed to, and sets From to that alias.
+You have one real mailbox and several addresses on it (`sales@…`, `jobs@…`, `hi@…`). A reply should leave as the address the sender wrote to, not the mailbox address.
 
-SMTP login stays the real mailbox. The mail server still has to allow that From (Gmail calls this **Send mail as**).
+SMTP login stays the real mailbox either way. The mail server still has to allow that From (Gmail calls this **Send mail as**). Neither the built-in method nor this plugin can override a server that rewrites From.
+
+Claws Mail already does this, if you are willing to give each alias its own folder. That has been in the folder Properties dialog since **4.1.0 / 3.19.0** (3 April 2022). It is easy to miss: it is not under Preferences, and it is not an account setting. Use that. Build this plugin only if those folders are a problem for you.
+
+| | Built-in | This plugin |
+|---|---|---|
+| Since | Claws Mail 4.1.0 | Written against 4.3.1 |
+| How | One folder per alias, From set on that folder | One text file, matched from the original headers |
+| Inbox stays mixed | No. Mail has to land in the alias folder | Yes |
+| Extra accounts | No | No |
+| Compile anything | No | Yes, against your Claws source tree |
+
+---
+
+## The built-in way (do this first)
+
+Confirmed on the Claws Mail users list, and in the [4.1.0 NEWS](https://www.claws-mail.org/NEWS): *'Default From:' has been added to the Compose page of the folder Properties. This allows setting an email address which will override the Account's email address.*
+
+### 1. Make a folder for the alias
+
+In the folder tree of the IMAP account, create a folder. One folder per alias. Name it after the address if that helps you (`sales`, `jobs`).
+
+### 2. File that alias's mail into the folder
+
+**Configuration → Filtering → Define…**
+
+A quick start: select a message that arrived at the alias, then **Tools → Create filter rule → Automatically → by To**. Edit the rule so the action is **Move** into the folder you just made. Add the rule.
+
+Match the address people write to. `To` is the usual header. If your provider writes the real recipient somewhere else, match that header instead (`Delivered-To`, `X-Original-To`, `Envelope-To`). A catch-all often arrives with your mailbox address in `To` and the alias only in `Delivered-To`. A rule on `To` will miss those.
+
+Turn on filtering when mail arrives: **Configuration → Preferences → Receive → "Filter messages on receiving"**. On an IMAP account you can also filter with a sieve rule on the server, if the provider offers one. Server-side filtering still works when Claws is not running.
+
+Rule order matters. A later move never sees a message an earlier rule already moved.
+
+### 3. Set From on that folder
+
+Right-click the folder → **Properties** → **Compose**.
+
+Tick **Default From:** and enter the alias:
+
+```
+Example Sales <sales@example.com>
+```
+
+**Apply to subfolders** if you file under that folder and still want the same From.
+
+OK.
+
+Reply to a message **in that folder** (or compose while the folder is selected). From should be the alias. Send one to yourself and read the From on the copy you receive. The compose window can look right while the server still substitutes the mailbox address.
+
+Repeat for each alias.
+
+### What this does not do
+
+- It does not pick the alias from the message. It picks the From of the **folder the message is in**. Leave the mail in the Inbox and the reply uses the Inbox's From, which is the account address unless you set one there too.
+- One folder cannot mean two aliases. A message addressed to both `sales@` and `jobs@` has to live in one folder, so it gets that folder's From.
+- The account dropdown still lists accounts, not aliases. **Default From** overrides the address. It does not add a row.
+
+---
+
+## Who the plugin is for
+
+You want the alias From, and you do not want a folder per alias.
+
+Typical case: a catch-all, or a handful of aliases, and you want those messages to stay in the Inbox next to everything else. The plugin opens the message you are replying to, finds the alias in the headers, and writes From. The folder does not matter.
+
+You do not need the plugin if:
+
+- A folder per alias is fine. Use the section above.
+- Every address is already its own Claws account. Claws replies from that account on its own.
 
 | | |
 |---|---|
@@ -16,17 +84,9 @@ SMTP login stays the real mailbox. The mail server still has to allow that From 
 | Config | `~/.claws-mail/claws-replyfromaliasrc` |
 | Log | `~/.claws-mail/claws-replyfromalias.log` |
 
-Claws Mail has no built-in alias list. The usual workaround is one extra account per alias. That works, and it stops being workable once you have several mailboxes and several aliases on each. This plugin keeps one account per real mailbox. Aliases live in a text file.
+Do not run both on the same folder. The plugin writes From again at Send, so a folder **Default From** and a plugin match can fight. Use the plugin on the mixed inbox. Leave it unloaded if the folders already do what you want.
 
 It does not add rows to the account dropdown. It does not change which account sends. It writes the From field.
-
----
-
-## Who this is for
-
-You already receive mail at more than one address in the same Claws account, and you want Reply to use the address the sender wrote to.
-
-You do **not** need this if every address is already its own Claws account. Claws will reply from that account on its own.
 
 ---
 
@@ -160,7 +220,6 @@ Editing From by hand in that reply window is overwritten when you press Send. Cl
 ---
 
 ## If it does nothing
-Open `~/.claws-mail/claws-replyfromalias.log`.
 
 | What you see | What it means |
 |---|---|
