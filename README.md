@@ -1,5 +1,5 @@
 # claws-mail-reply-from-alias-plugin
-This plugin makes replying to an email sent to your alias email address easy. A mailbox might carry emails from multiple alias email addresses. This plugin makes replying with the correct email address easy
+This plugin makes replying to an email sent to your alias email address easy. A mailbox might carry emails from multiple alias email addresses. This plugin makes replying with the correct email address easy.
 
 **Claws Mail plugin: reply From is the alias the message was sent to.**
 
@@ -160,6 +160,7 @@ Editing From by hand in that reply window is overwritten when you press Send. Cl
 ---
 
 ## If it does nothing
+Open `~/.claws-mail/claws-replyfromalias.log`.
 
 | What you see | What it means |
 |---|---|
