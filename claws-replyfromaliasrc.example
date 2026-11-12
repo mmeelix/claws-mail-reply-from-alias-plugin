@@ -1,0 +1,28 @@
+# alias | mailbox address | display name
+#
+# alias            address the message was sent to. Exact, case-insensitive.
+# mailbox address  that account's Mail address, not the SMTP login.
+# display name     optional. Name only, not "Name <addr>".
+#
+# First match in the highest-priority header wins.
+# Delivered-To, Envelope-To, X-Original-To, X-Envelope-To,
+# X-Delivered-To, X-Rcpt-To, Original-Recipient, To, Cc, Bcc,
+# Apparently-To, Resent-To, then Received "for <alias>".
+# Within one header, file order wins.
+#
+# A mailbox column that does not match the compose account skips that alias.
+# Set it. Otherwise a reply on another account can be rewritten too.
+#
+# Comments are whole lines. A pipe in the display name is fine (split is 3 fields).
+# Plus-addresses are not folded: list sales+x@example.com itself if you need it.
+#
+# The SMTP login is not changed. The server has to allow this From
+# (Gmail: Send mail as).
+#
+# Debug switch. Next reply picks it up, no restart.
+# debug
+# debug=on
+# One session only: CLAWS_REPLYFROMALIAS_DEBUG=1 claws-mail
+#
+# sales@example.com | me@example.com | Example Sales
+# jobs@example.com | me@example.com | Example Jobs
